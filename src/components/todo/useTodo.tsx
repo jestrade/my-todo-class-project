@@ -8,9 +8,8 @@ export const useTodo = () => {
     const addTodo = async (todo: TodoType) => {
         try {
             const data = await todoApi.createTodo(todo);
-            if (data.inserted?.length > 0) {
-                setTodos([...todos, data.inserted[0]]);
-            }
+            // Backend returns the created task object directly
+            setTodos((prev) => [...prev, data]);
         } catch (error) {
             console.error('Error adding todo:', error);
             throw error;
@@ -20,8 +19,7 @@ export const useTodo = () => {
     const removeTodo = async (id: string) => {
         try {
             await todoApi.deleteTodo(id);
-   
-            setTodos(todos.filter(todo => todo._id !== id));
+            setTodos((prev) => prev.filter((t) => (t.id || t._id) !== id));
         } catch (error) {
             console.error('Error removing todo:', error);
             throw error;
@@ -30,17 +28,19 @@ export const useTodo = () => {
 
     const markAsDone = async (id: string) => {
         try {
-            const updatedAt = new Date().toISOString();
+            const updated_at = new Date().toISOString();
             await todoApi.updateTodo(id, {
-                done: true,
-                updatedAt
+                completed: true,
+                updated_at
             });
-            
-            setTodos(todos.map(todo => 
-                todo._id === id 
-                    ? { ...todo, done: true, updatedAt } 
-                    : todo
-            ));
+
+            setTodos((prev) => prev.map((t) => {
+                const todoId = t.id || t._id || '';
+                if (todoId === id) {
+                    return { ...t, completed: true, updated_at };
+                }
+                return t;
+            }));
         } catch (error) {
             console.error('Error marking todo as done:', error);
             throw error;
@@ -51,10 +51,9 @@ export const useTodo = () => {
         const fetchTodos = async () => {
             try {
                 const data = await todoApi.getTodos();
-                setTodos(data);
+                setTodos(data || []);
             } catch (error) {
                 console.error('Error fetching todos:', error);
-                throw error;
             }
         };
 

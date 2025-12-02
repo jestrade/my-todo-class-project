@@ -3,19 +3,31 @@ import type { TodoType } from "./types";
 import { Check, TodoCol } from "./styled";
 
 const TodoItem = ({ todo, markAsDone, removeTodo }: { todo: TodoType, markAsDone: (id: string) => void, removeTodo: (id: string) => void }) => {
+    const todoId = todo.id || todo._id || '';
+    const isDone = todo.completed !== undefined ? todo.completed : todo.done;
+    const content = todo.title || todo.content || '';
+    const createdAt = todo.created_at || todo.createdAt || '';
+    const updatedAt = todo.updated_at || todo.updatedAt || '';
+    
     const handleDelete = () => {
-        removeTodo(todo._id);
+        removeTodo(todoId);
     }
     const handleDone = () => {
-        markAsDone(todo._id);
+        markAsDone(todoId);
     }
-    return (<tr>
-                <TodoCol><Check type="checkbox" checked={todo.done} onChange={handleDone}/></TodoCol>
-                <TodoCol>{todo.content}</TodoCol>
-                <TodoCol>{todo.createdAt}</TodoCol>
-                <TodoCol>{todo.updatedAt}</TodoCol>
-                <TodoCol><button onClick={handleDelete}>Delete</button></TodoCol>
-            </tr>);
+    return (
+        <tr>
+            <TodoCol>
+                <Check type="checkbox" checked={!!isDone} onChange={handleDone} />
+            </TodoCol>
+            <TodoCol>{content}</TodoCol>
+            <TodoCol>{createdAt}</TodoCol>
+            <TodoCol>{updatedAt}</TodoCol>
+            <TodoCol>
+                <button onClick={handleDelete}>Delete</button>
+            </TodoCol>
+        </tr>
+    );
 }
- 
+
 export default TodoItem;

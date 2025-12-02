@@ -39,26 +39,14 @@ export const apiClient = {
 };
 
 export const todoApi = {
-  getTodos: () => apiClient.get('/read', { tableName: 'todos' }),
-  
-  createTodo: (todo: any) => 
-    apiClient.post('/insert', {
-      tableName: 'todos',
-      records: [todo]
-    }),
-    
-  updateTodo: (id: string, updates: any) => 
-    apiClient.put('/update', {
-      tableName: 'todos',
-      idColumn: '_id',
-      idValue: id,
-      updates: updates
-    }),
-    
-  deleteTodo: (id: string) => 
-    apiClient.delete('/delete', {
-      tableName: 'todos',
-      idColumn: '_id',
-      idValue: id
-    })
+  getTodos: () => apiClient.get('/tasks'),
+
+  createTodo: (todo: any) =>
+    apiClient.post('/tasks', todo),
+
+  updateTodo: (id: string, updates: any) =>
+    apiClient.put(`/tasks/${id}`, updates),
+
+  deleteTodo: (id: string) =>
+    apiClient.delete(`/tasks/${id}`)
 };
